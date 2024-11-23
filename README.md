@@ -8,7 +8,7 @@
 1. Clone the Repository:
 
 ```Bash
-git clone --single-branch --branch develop <repository_url>
+git clone --single-branch --branch develop https://github.com/mallick1126/ui-cybershield.git
 ```
 
 - This will clone only the develop branch, ensuring you start with the latest development version.
