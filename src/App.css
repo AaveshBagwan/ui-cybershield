@@ -1,42 +1,70 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.App {
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.quiz {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg);
+  color: black;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.quiz h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.card {
-  padding: 2em;
+.option {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  cursor: pointer;
+  background-color: #fff;
+  color: #333;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
-.read-the-docs {
-  color: #888;
+.option:hover {
+  border-color: #aaa;
+}
+
+.option-label {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.option.selected {
+  background-color: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #555;
 }
