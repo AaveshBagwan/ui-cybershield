@@ -1,0 +1,116 @@
+/* General styles for the navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #fffbea; /* Soft background color */
+  border-bottom: 1px solid #f0e9d2; /* Subtle bottom border */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+  overflow: hidden; /* Hide overflow */
+}
+
+/* Logo styling */
+.navbar-logo h1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.quiz {
+  color: #000; /* Black color for Quiz */
+}
+
+.grad {
+  color: #ffc107; /* Yellow color for Grad */
+}
+
+/* Links styling */
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline;
+}
+
+.link {
+  text-decoration: none;
+  color: #ccc; /* Light gray for links */
+  font-size: 1.2rem;
+}
+
+.link.active,
+.link:hover {
+  color: #000; /* Black on active or hover */
+  font-weight: bold;
+}
+
+/* Login button styling */
+.login-btn {
+  background-color: transparent;
+  color: #ffc107;
+  border: 2px solid #ffc107;
+  padding: 8px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-btn:hover {
+  background-color: #ffc107;
+  color: #fff;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .navbar-logo h1 {
+    font-size: 1.5rem;
+  }
+
+  .navbar-links {
+    gap: 20px;
+  }
+
+  .login-btn {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .login-btn {
+    margin-top: 15px;
+  }
+}

@@ -10,11 +10,6 @@ function Quiz() {
 
   return (
     <div className="quiz-container min-h-screen justify-between flex flex-col">
-      <header className="quiz-header">
-        <h1>QuizGrad</h1>
-        <span className="user-profile">Tarun ▼</span>
-      </header>
-
       <div className="progress-bar">
         {[1, 2, 3, 4, 5].map((step) => (
           <span
