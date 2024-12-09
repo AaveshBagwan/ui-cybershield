@@ -1,58 +1,45 @@
-
-import "./App.css";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import List from "./pages/List/List";
+import Single from "./pages/Single/Single";
+import New from "./pages/New/New";
+import { userInputs, productInputs } from "./formSource";
+import "./style/dark.scss";
+import { useContext } from "react";
+import { DarkModeContext } from "./context/darkModeContext";
 
 function App() {
-  // const [quiz, setQuiz] = useState(null);
-  // const [selectedOption, setSelectedOption] = useState("");
+  const { darkMode } = useContext(DarkModeContext);
 
-  // const getQuestions = () => {
-  //   axios({
-  //     method: "GET",
-  //     url: "http://localhost:8080/quiz/v1.0/getQuestions",
-  //   }).then(function (response) {
-  //     setQuiz(response.data);
-  //     setSelectedOption("");
-  //   });
-  // };
-
-  // const handleOptionClick = (option) => {
-  //   setSelectedOption(option);
-  // };
-
-  // return (
-  //   <div className="App">
-  //     <h1>Quiz App</h1>
-  //     <div className="card">
-  //       <button onClick={getQuestions}>Fetch Quiz</button>
-  //       {quiz && (
-  //         <div className="quiz">
-  //           <h2>{quiz.question}</h2>
-  //           <div className="options">
-  //             {["option1", "option2", "option3", "option4"].map(
-  //               (key, index) => (
-  //                 <div
-  //                   key={index}
-  //                   className={`option ${
-  //                     selectedOption === quiz[key] ? "selected" : ""
-  //                   }`}
-  //                   onClick={() => handleOptionClick(quiz[key])}
-  //                 >
-  //                   <span className="option-label">
-  //                     {String.fromCharCode(65 + index)}
-  //                   </span>
-  //                   {quiz[key]}
-  //                 </div>
-  //               )
-  //             )}
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //   </div>
-  // );
-
+  return (
+    <div className={darkMode ? "app dark" : "app"}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/">
+            <Route index element={<Home />} />
+            <Route path="login" element={<Login />} />
+            <Route path="users">
+              <Route index element={<List />} />
+              <Route path=":userId" element={<Single />} />
+              <Route
+                path="new"
+                element={<New inputs={userInputs} title="Add New User" />}
+              />
+            </Route>
+            <Route path="products">
+              <Route index element={<List />} />
+              <Route path=":productId" element={<Single />} />
+              <Route
+                path="new"
+                element={<New inputs={productInputs} title="Add New Product" />}
+              />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
-
 
 export default App;

@@ -37,7 +37,7 @@ function Quiz() {
         </div>
       </main>
 
-      <footer className="quiz-footer ">
+      <footer className="quiz-footer footer">
         <button className="prev">Previous</button>
         <div className="timer">60</div>
         <button className="next" onClick={handleNext}>
