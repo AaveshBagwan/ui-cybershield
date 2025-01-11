@@ -6,8 +6,8 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-logo">
         <h1>
-          <span className="quiz">Quiz</span>
-          <span className="grad">Grad</span>
+          <span className="quiz">Cyber</span>
+          <span className="grad">Shield</span>
         </h1>
       </div>
       <ul className="navbar-links">
@@ -32,7 +32,11 @@ function Navbar() {
           </NavLink>
         </li>
       </ul>
-      <button className="login-btn">Login</button>
+      <button className="login-btn">
+        <NavLink to="/auth/login" className="link">
+          Login
+        </NavLink>
+      </button>
     </nav>
   );
 }
