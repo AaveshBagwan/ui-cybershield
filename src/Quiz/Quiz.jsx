@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Quiz.css';
+import { endpoints, handleApiError } from '../config'
 
 const Quiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -9,117 +10,32 @@ const Quiz = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [skippedQuestions, setSkippedQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
+  const [, setError] = useState(null);
+  const [isLoading,  setIsLoading] = useState(true);
 
   useEffect(() => {
-    const sampleApiResponse = {
-      "testId": "Long",
-      "questionList": [
-        {
-          "questionId": 1,
-          "question": "What is the capital of France?",
-          "options": [
-            { "optionId": 1, "option": "London" },
-            { "optionId": 2, "option": "Paris" },
-            { "optionId": 3, "option": "Berlin" },
-            { "optionId": 4, "option": "Madrid" }
-          ]
-        },
-        {
-          "questionId": 2,
-          "question": "Who painted the Mona Lisa?",
-          "options": [
-            { "optionId": 1, "option": "Michelangelo" },
-            { "optionId": 2, "option": "Vincent van Gogh" },
-            { "optionId": 3, "option": "Leonardo da Vinci" },
-            { "optionId": 4, "option": "Pablo Picasso" }
-          ]
-        },
-        {
-          "questionId": 3,
-          "question": "What is the largest planet in our solar system?",
-          "options": [
-            { "optionId": 1, "option": "Earth" },
-            { "optionId": 2, "option": "Mars" },
-            { "optionId": 3, "option": "Jupiter" },
-            { "optionId": 4, "option": "Saturn" }
-          ]
-        },
-        {
-          "questionId": 4,
-          "question": "What is the chemical symbol for gold?",
-          "options": [
-            { "optionId": 1, "option": "Ag" },
-            { "optionId": 2, "option": "Au" },
-            { "optionId": 3, "option": "Fe" },
-            { "optionId": 4, "option": "Cu" }
-          ]
-        },
-        {
-          "questionId": 5,
-          "question": "Who wrote the play 'Hamlet'?",
-          "options": [
-            { "optionId": 1, "option": "Charles Dickens" },
-            { "optionId": 2, "option": "William Shakespeare" },
-            { "optionId": 3, "option": "Jane Austen" },
-            { "optionId": 4, "option": "Mark Twain" }
-          ]
-        },
-        {
-          "questionId": 6,
-          "question": "What is the tallest mammal on Earth?",
-          "options": [
-            { "optionId": 1, "option": "Giraffe" },
-            { "optionId": 2, "option": "Elephant" },
-            { "optionId": 3, "option": "Horse" },
-            { "optionId": 4, "option": "Kangaroo" }
-          ]
-        },
-        {
-          "questionId": 7,
-          "question": "In which year did World War II end?",
-          "options": [
-            { "optionId": 1, "option": "1940" },
-            { "optionId": 2, "option": "1942" },
-            { "optionId": 3, "option": "1945" },
-            { "optionId": 4, "option": "1948" }
-          ]
-        },
-        {
-          "questionId": 8,
-          "question": "What is the largest ocean on Earth?",
-          "options": [
-            { "optionId": 1, "option": "Atlantic Ocean" },
-            { "optionId": 2, "option": "Indian Ocean" },
-            { "optionId": 3, "option": "Arctic Ocean" },
-            { "optionId": 4, "option": "Pacific Ocean" }
-          ]
-        },
-        {
-          "questionId": 9,
-          "question": "Who invented the light bulb?",
-          "options": [
-            { "optionId": 1, "option": "Thomas Edison" },
-            { "optionId": 2, "option": "Nikola Tesla" },
-            { "optionId": 3, "option": "Albert Einstein" },
-            { "optionId": 4, "option": "Alexander Graham Bell" }
-          ]
-        },
-        {
-          "questionId": 10,
-          "question": "How many bones are in the human body?",
-          "options": [
-            { "optionId": 1, "option": "206" },
-            { "optionId": 2, "option": "205" },
-            { "optionId": 3, "option": "208" },
-            { "optionId": 4, "option": "105" },
-          ] 
-        } 
-      ]
+    const fetchQuestions = async () => {
+      try {
+        setIsLoading(isLoading); 
+        const req = {
+          userId: 2,  // will use to set the actual userId from the logged in user
+          testId: 3, // have to set a logic to determine this as well (based on the user login)
+        };
+        const response = await endpoints.quiz.getTest(req);
+        setQuestionsData(response.data.responseData.questionList);
+      } catch (error) {
+        setError(handleApiError(error));
+      } finally {
+        setIsLoading(false);
+      }
     };
-    setQuestionsData(sampleApiResponse.questionList);
-  }, []);
+  
+    fetchQuestions();
+  }, [isLoading]);
 
   useEffect(() => {
+    if (isLoading) return; 
+
     const timer = setInterval(() => {
       if (totalTime > 0) {
         setTotalTime(prev => prev - 1);
@@ -130,7 +46,7 @@ const Quiz = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [totalTime]);
+  }, [totalTime, isLoading]);
 
   const handleNext = () => {
     if (currentQuestion < questionsData.length - 1 && selectedAnswer) { 

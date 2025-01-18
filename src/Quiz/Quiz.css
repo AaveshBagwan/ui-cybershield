@@ -1,7 +1,7 @@
 .quiz-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 90px); /* Adjusted height to account for navbar */
+  height: calc(94vh - 100px); 
   padding: 10px 40px;
   background-color: #f9f9f9;
 }
@@ -21,15 +21,15 @@
 }
 
 .step.current {
-  background-color: white; /* Current question */
+  background-color: #ddbe61; /* Current question */
 }
 
 .step.answered {
-  background-color: green; /* Answered questions */
+  background-color: rgb(112, 171, 112); /* Answered questions */
 }
 
 .step.skipped {
-  background-color: red; /* Skipped questions */
+  background-color: rgb(215, 87, 87); /* Skipped questions */
 }
 
 .quiz-content {
@@ -151,6 +151,7 @@
   display: flex;
   gap: 1rem;
 }
+
 
 @media screen and (max-width: 768px) {
   .quiz-container {
