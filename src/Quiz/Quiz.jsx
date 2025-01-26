@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import './Quiz.css';
-import { endpoints, handleApiError } from '../config'
+import { useState, useEffect } from "react";
+import "./Quiz.css";
+import { endpoints, handleApiError } from "../config";
+import Dialog from "../utils/Dialog/Dialog";
+import { useNavigate } from "react-router-dom";
 
 const Quiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -11,99 +13,230 @@ const Quiz = () => {
   const [skippedQuestions, setSkippedQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
   const [, setError] = useState(null);
-  const [isLoading,  setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [timerStarted, setTimerStarted] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [isLastQuestionSkipped, setIsLastQuestionSkipped] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchQuestions = async () => {
       try {
-        setIsLoading(isLoading); 
+        setIsLoading(true);
         const req = {
-          userId: 2,  // will use to set the actual userId from the logged in user
-          testId: 3, // have to set a logic to determine this as well (based on the user login)
+          userId: 2,
+          testId: 3,
         };
         const response = await endpoints.quiz.getTest(req);
-        setQuestionsData(response.data.responseData.questionList);
+        if (isMounted && response.status === 200) {
+          setQuestionsData(response.data.responseData.questionList);
+          setTimerStarted(true); // Start timer only after successful API response
+        }
       } catch (error) {
-        setError(handleApiError(error));
+        if (isMounted) {
+          setError(handleApiError(error));
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
-  
+
     fetchQuestions();
-  }, [isLoading]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
-    if (isLoading) return; 
+    if (!timerStarted || isLoading) return;
 
     const timer = setInterval(() => {
       if (totalTime > 0) {
-        setTotalTime(prev => prev - 1);
+        setTotalTime((prev) => prev - 1);
       } else {
-        // Disable everything when the timer expires
-        console.log('Time expired! Disabling all functionality.');
+        clearInterval(timer);
+        setShowDialog(true); // Show dialog on time expiry
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [totalTime, isLoading]);
+  }, [totalTime, isLoading, timerStarted]);
 
   const handleNext = () => {
-    if (currentQuestion < questionsData.length - 1 && selectedAnswer) { 
-      setAnsweredQuestions([...answeredQuestions, currentQuestion]);
-      setUserAnswers([...userAnswers, { qid: questionsData[currentQuestion].questionId, selectedOptionId: selectedAnswer.optionId }]); 
+    if (currentQuestion < questionsData.length - 1) {
+      if (
+        selectedAnswer &&
+        !userAnswers.some(
+          (answer) => answer.qid === questionsData[currentQuestion].questionId
+        )
+      ) {
+        setAnsweredQuestions([...answeredQuestions, currentQuestion]);
+        setUserAnswers([
+          ...userAnswers,
+          {
+            qid: questionsData[currentQuestion].questionId,
+            selectedOptionId: selectedAnswer.optionId,
+          },
+        ]);
+      }
       setSelectedAnswer(null);
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setSelectedAnswer(null);
-      setCurrentQuestion(prev => prev - 1);
+      const prevAnswer = userAnswers.find(
+        (answer) => answer.qid === questionsData[currentQuestion - 1].questionId
+      );
+      if (prevAnswer) {
+        const prevOption = questionsData[currentQuestion - 1].options.find(
+          (opt) => opt.optionId === prevAnswer.selectedOptionId
+        );
+        setSelectedAnswer(prevOption);
+      } else {
+        setSelectedAnswer(null);
+      }
+      setCurrentQuestion((prev) => prev - 1);
     }
   };
 
   const handleSkip = () => {
-    if (currentQuestion < questionsData.length - 1) {
+    if (currentQuestion === questionsData.length - 1) {
+      // If it's the last question, mark it as skipped
+      setIsLastQuestionSkipped(true);
+    } else if (currentQuestion < questionsData.length - 1) {
       setSkippedQuestions([...skippedQuestions, currentQuestion]);
       setSelectedAnswer(null);
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
     }
   };
-  const handleSubmit = () => {
-    // Prepare payload for submitTest API
-    const payload = {
-      "userId": "Long", 
-      "testId": "Long", 
-      "questionsAnswersList": userAnswers
-    };
 
-    // Send payload to submitTest API
-    console.log("Submitting payload:", payload); 
+  const handleSubmit = () => {
+    setShowDialog(true); // Show confirmation dialog
+  };
+
+  const confirmSubmit = async () => {
+    setIsLoading(true);
+    if (
+      selectedAnswer &&
+      !userAnswers.some(
+        (answer) => answer.qid === questionsData[currentQuestion]?.questionId
+      )
+    ) {
+      setUserAnswers((prevAnswers) => [
+        ...prevAnswers,
+        {
+          qid: questionsData[currentQuestion].questionId,
+          selectedOptionId: selectedAnswer.optionId,
+        },
+      ]);
+    }
+
+    const completeAnswersList = questionsData.map((question) => {
+      const existingAnswer = userAnswers.find(
+        (answer) => answer.qid === question.questionId
+      );
+      return {
+        qid: question.questionId,
+        selectedOptionId: existingAnswer
+          ? existingAnswer.selectedOptionId
+          : selectedAnswer?.qid === question.questionId
+          ? selectedAnswer.optionId
+          : null,
+      };
+    });
+
+    try {
+      const payload = {
+        userId: 2,
+        testId: 3,
+        questionAnswerList: completeAnswersList,
+      };
+
+      const response = await endpoints.quiz.submitTest(payload);
+      if (response.status === 200) {
+        // Set session storage to indicate test submission
+        sessionStorage.setItem("testSubmitted", "true");
+        navigate("/results", { state: { result: response.data } });
+        setShowDialog(false);
+      } else {
+        throw new Error("Submission failed. Please try again.");
+      }
+    } catch (error) {
+      console.log("Error in submitting the test", error);
+      alert("Failed to submit the test. Please try again later.");
+    }finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cancelSubmit = () => {
+    setShowDialog(false); 
   };
 
   const handleOptionClick = (option) => {
-    // Prevent option selection if the question has already been answered
-    if (answeredQuestions.includes(currentQuestion)) {
-      return;
-    }
     setSelectedAnswer(option);
+
+    const existingAnswerIndex = userAnswers.findIndex(
+      (answer) => answer.qid === questionsData[currentQuestion].questionId
+    );
+
+    if (existingAnswerIndex !== -1) {
+      const updatedAnswers = [...userAnswers];
+      updatedAnswers[existingAnswerIndex] = {
+        qid: questionsData[currentQuestion].questionId,
+        selectedOptionId: option.optionId,
+      };
+      setUserAnswers(updatedAnswers);
+    } else {
+      setUserAnswers([
+        ...userAnswers,
+        {
+          qid: questionsData[currentQuestion].questionId,
+          selectedOptionId: option.optionId,
+        },
+      ]);
+    }
   };
+
+  const isQuestionAnswered = (questionIndex) => {
+    return userAnswers.some(
+      (answer) => answer.qid === questionsData[questionIndex]?.questionId
+    );
+  };
+
+  const getCurrentSelectedOption = () => {
+    const currentAnswer = userAnswers.find(
+      (answer) => answer.qid === questionsData[currentQuestion]?.questionId
+    );
+    if (currentAnswer) {
+      return questionsData[currentQuestion].options.find(
+        (opt) => opt.optionId === currentAnswer.selectedOptionId
+      );
+    }
+    return selectedAnswer;
+  };
+
   return (
     <div className="quiz-container">
-       <div className="progress-bar">
+      <div className="progress-bar">
         {questionsData.map((_, index) => (
           <div
             key={index}
             className={`step ${
-              currentQuestion === index 
-                ? 'current' 
-                : answeredQuestions.includes(index) 
-                  ? 'answered' 
-                  : skippedQuestions.includes(index) 
-                    ? 'skipped' 
-                    : ''
+              currentQuestion === index
+                ? "current"
+                : answeredQuestions.includes(index)
+                ? "answered"
+                : skippedQuestions.includes(index)
+                ? "skipped"
+                : ""
             }`}
           />
         ))}
@@ -111,7 +244,7 @@ const Quiz = () => {
 
       <div className="quiz-content">
         <div className="quiz-question">
-          {questionsData[currentQuestion]?.question || 'Loading...'}
+          {questionsData[currentQuestion]?.question || "Loading..."}
         </div>
 
         <div className="options-container">
@@ -119,8 +252,12 @@ const Quiz = () => {
             <button
               key={option.optionId}
               onClick={() => handleOptionClick(option)}
-              className={`option ${selectedAnswer?.optionId === option.optionId ? 'selected' : ''}`}
-              disabled={totalTime === 0 || (answeredQuestions.includes(currentQuestion))} 
+              className={`option ${
+                getCurrentSelectedOption()?.optionId === option.optionId
+                  ? "selected"
+                  : ""
+              }`}
+              disabled={totalTime === 0}
             >
               {option.option}
             </button>
@@ -138,30 +275,65 @@ const Quiz = () => {
         </button>
 
         <div className="timer">
-          {`${Math.floor(totalTime / 60).toString().padStart(2, '0')}:${(totalTime % 60).toString().padStart(2, '0')}`}
+          {`${Math.floor(totalTime / 60)
+            .toString()
+            .padStart(2, "0")}:${(totalTime % 60).toString().padStart(2, "0")}`}
         </div>
 
         <div className="button-group">
-          {currentQuestion === questionsData.length - 1 ? ( 
-            <button onClick={handleSubmit} className="button submit">
-              Submit
-            </button>
+          {currentQuestion === questionsData.length - 1 ? (
+            // For the last question
+            isLastQuestionSkipped || getCurrentSelectedOption() ? (
+              // Show Submit if skipped or an option is selected
+              <button onClick={handleSubmit} className="button submit">
+                Submit
+              </button>
+            ) : (
+              // Show Skip button if no option is selected and not skipped
+              <button
+                onClick={handleSkip}
+                className="button skip"
+                disabled={totalTime === 0}
+              >
+                Skip
+              </button>
+            )
           ) : (
+            // For other questions
             <>
-              <button 
-                onClick={handleNext} 
-                className="button next" 
-                disabled={!selectedAnswer || totalTime === 0}
+              <button
+                onClick={handleNext}
+                className="button next"
+                disabled={
+                  (!selectedAnswer && !isQuestionAnswered(currentQuestion)) ||
+                  totalTime === 0
+                }
               >
                 Next
               </button>
-              <button onClick={handleSkip} className="button skip" disabled={totalTime === 0}>
+              <button
+                onClick={handleSkip}
+                className="button skip"
+                disabled={totalTime === 0}
+              >
                 Skip
               </button>
             </>
           )}
         </div>
       </div>
+
+      {showDialog && (
+        <Dialog
+          message={
+            totalTime === 0
+              ? "Time's up! Submitting your test..."
+              : "Are you sure you want to submit?"
+          }
+          onConfirm={confirmSubmit}
+          onCancel={totalTime === 0 ? null : cancelSubmit} // No cancel option on time expiry
+        />
+      )}
     </div>
   );
 };
