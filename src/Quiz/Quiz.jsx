@@ -16,7 +16,7 @@ const Quiz = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [timerStarted, setTimerStarted] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [isLastQuestionSkipped, setIsLastQuestionSkipped] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,8 +26,8 @@ const Quiz = () => {
       try {
         setIsLoading(true);
         const req = {
-          userId: 2,
-          testId: 3,
+          userId: 3,
+          testId: 5,
         };
         const response = await endpoints.quiz.getTest(req);
         if (isMounted && response.status === 200) {
@@ -72,7 +72,8 @@ const Quiz = () => {
       if (
         selectedAnswer &&
         !userAnswers.some(
-          (answer) => answer.questionId === questionsData[currentQuestion].questionId
+          (answer) =>
+            answer.questionId === questionsData[currentQuestion].questionId
         )
       ) {
         setAnsweredQuestions([...answeredQuestions, currentQuestion]);
@@ -92,7 +93,8 @@ const Quiz = () => {
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       const prevAnswer = userAnswers.find(
-        (answer) => answer.questionId === questionsData[currentQuestion - 1].questionId
+        (answer) =>
+          answer.questionId === questionsData[currentQuestion - 1].questionId
       );
       if (prevAnswer) {
         const prevOption = questionsData[currentQuestion - 1].options.find(
@@ -107,10 +109,7 @@ const Quiz = () => {
   };
 
   const handleSkip = () => {
-    if (currentQuestion === questionsData.length - 1) {
-      // If it's the last question, mark it as skipped
-      setIsLastQuestionSkipped(true);
-    } else if (currentQuestion < questionsData.length - 1) {
+    if (currentQuestion < questionsData.length - 1) {
       setSkippedQuestions([...skippedQuestions, currentQuestion]);
       setSelectedAnswer(null);
       setCurrentQuestion((prev) => prev + 1);
@@ -126,7 +125,8 @@ const Quiz = () => {
     if (
       selectedAnswer &&
       !userAnswers.some(
-        (answer) => answer.questionId === questionsData[currentQuestion]?.questionId
+        (answer) =>
+          answer.questionId === questionsData[currentQuestion]?.questionId
       )
     ) {
       setUserAnswers((prevAnswers) => [
@@ -147,8 +147,8 @@ const Quiz = () => {
         selectedOptionId: existingAnswer
           ? existingAnswer.selectedOptionId
           : selectedAnswer?.questionId === question.questionId
-            ? selectedAnswer.optionId
-            : null,
+          ? selectedAnswer.optionId
+          : null,
       };
     });
 
@@ -184,7 +184,8 @@ const Quiz = () => {
     setSelectedAnswer(option);
 
     const existingAnswerIndex = userAnswers.findIndex(
-      (answer) => answer.questionId === questionsData[currentQuestion].questionId
+      (answer) =>
+        answer.questionId === questionsData[currentQuestion].questionId
     );
 
     if (existingAnswerIndex !== -1) {
@@ -213,7 +214,8 @@ const Quiz = () => {
 
   const getCurrentSelectedOption = () => {
     const currentAnswer = userAnswers.find(
-      (answer) => answer.questionId === questionsData[currentQuestion]?.questionId
+      (answer) =>
+        answer.questionId === questionsData[currentQuestion]?.questionId
     );
     if (currentAnswer) {
       return questionsData[currentQuestion].options.find(
@@ -229,14 +231,16 @@ const Quiz = () => {
         {questionsData.map((_, index) => (
           <div
             key={index}
-            className={`step ${currentQuestion === index
-              ? "current"
-              : answeredQuestions.includes(index)
-                ? "answered"
+            className={`step ${
+              currentQuestion === index
+                ? "current"
+                : isQuestionAnswered(index)
+                ? "attempted"
                 : skippedQuestions.includes(index)
-                  ? "skipped"
-                  : ""
-              }`}
+                ? "skipped"
+                : ""
+            }`}
+            onClick={() => setCurrentQuestion(index)}
           />
         ))}
       </div>
@@ -251,10 +255,11 @@ const Quiz = () => {
             <button
               key={option.optionId}
               onClick={() => handleOptionClick(option)}
-              className={`option ${getCurrentSelectedOption()?.optionId === option.optionId
-                ? "selected"
-                : ""
-                }`}
+              className={`option ${
+                getCurrentSelectedOption()?.optionId === option.optionId
+                  ? "selected"
+                  : ""
+              }`}
               disabled={totalTime === 0}
             >
               {option.option}
@@ -280,31 +285,18 @@ const Quiz = () => {
 
         <div className="button-group">
           {currentQuestion === questionsData.length - 1 ? (
-            // For the last question
-            isLastQuestionSkipped || getCurrentSelectedOption() ? (
-              // Show Submit if skipped or an option is selected
-              <button onClick={handleSubmit} className="button submit">
-                Submit
-              </button>
-            ) : (
-              // Show Skip button if no option is selected and not skipped
-              <button
-                onClick={handleSkip}
-                className="button skip"
-                disabled={totalTime === 0}
-              >
-                Skip
-              </button>
-            )
+            <button onClick={handleSubmit} className="button submit">
+              Submit
+            </button>
           ) : (
-            // For other questions
             <>
               <button
                 onClick={handleNext}
                 className="button next"
                 disabled={
                   (!selectedAnswer && !isQuestionAnswered(currentQuestion)) ||
-                  totalTime === 0
+                  totalTime === 0 ||
+                  isLoading
                 }
               >
                 Next
@@ -312,7 +304,7 @@ const Quiz = () => {
               <button
                 onClick={handleSkip}
                 className="button skip"
-                disabled={totalTime === 0}
+                disabled={totalTime === 0 || isLoading}
               >
                 Skip
               </button>
@@ -329,7 +321,7 @@ const Quiz = () => {
               : "Are you sure you want to submit?"
           }
           onConfirm={confirmSubmit}
-          onCancel={totalTime === 0 ? null : cancelSubmit} // No cancel option on time expiry
+          onCancel={totalTime === 0 ? null : cancelSubmit} 
         />
       )}
     </div>
