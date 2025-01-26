@@ -147,8 +147,8 @@ const Quiz = () => {
         selectedOptionId: existingAnswer
           ? existingAnswer.selectedOptionId
           : selectedAnswer?.qid === question.questionId
-          ? selectedAnswer.optionId
-          : null,
+            ? selectedAnswer.optionId
+            : null,
       };
     });
 
@@ -163,7 +163,7 @@ const Quiz = () => {
       if (response.status === 200) {
         // Set session storage to indicate test submission
         sessionStorage.setItem("testSubmitted", "true");
-        navigate("/results", { state: { result: response.data } });
+        navigate("/results", { state: { result: response.data.responseData } });
         setShowDialog(false);
       } else {
         throw new Error("Submission failed. Please try again.");
@@ -171,13 +171,13 @@ const Quiz = () => {
     } catch (error) {
       console.log("Error in submitting the test", error);
       alert("Failed to submit the test. Please try again later.");
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
 
   const cancelSubmit = () => {
-    setShowDialog(false); 
+    setShowDialog(false);
   };
 
   const handleOptionClick = (option) => {
@@ -229,15 +229,14 @@ const Quiz = () => {
         {questionsData.map((_, index) => (
           <div
             key={index}
-            className={`step ${
-              currentQuestion === index
-                ? "current"
-                : answeredQuestions.includes(index)
+            className={`step ${currentQuestion === index
+              ? "current"
+              : answeredQuestions.includes(index)
                 ? "answered"
                 : skippedQuestions.includes(index)
-                ? "skipped"
-                : ""
-            }`}
+                  ? "skipped"
+                  : ""
+              }`}
           />
         ))}
       </div>
@@ -252,11 +251,10 @@ const Quiz = () => {
             <button
               key={option.optionId}
               onClick={() => handleOptionClick(option)}
-              className={`option ${
-                getCurrentSelectedOption()?.optionId === option.optionId
-                  ? "selected"
-                  : ""
-              }`}
+              className={`option ${getCurrentSelectedOption()?.optionId === option.optionId
+                ? "selected"
+                : ""
+                }`}
               disabled={totalTime === 0}
             >
               {option.option}

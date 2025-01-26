@@ -5,7 +5,7 @@ import "./Result.css";
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [resultData, setResultData] = useState(null);
+  // const [resultData, setResultData] = useState();
 
   useEffect(() => {
     // Check both session storage and location state
@@ -15,8 +15,8 @@ const Results = () => {
       navigate("/");
       return;
     }
-
-    setResultData(location.state.result);
+    // console.log(location.state.result.responseData);
+    // setResultData(location.state.result);   //check why this is being called later than const in the below code
 
     // Cleanup function to remove the session storage when leaving results page
     return () => {
@@ -24,8 +24,9 @@ const Results = () => {
     };
   }, [location, navigate]);
 
-  const { score, Grade } = resultData;
-  const isPassed = Grade?.toLowerCase() !== "fail";
+  const score = location.state.result.score;
+  const grade = location.state.result.grade;
+  const isPassed = grade?.toLowerCase() !== "fail"
 
   return (
     <div className="results-page">
@@ -54,7 +55,7 @@ const Results = () => {
             <span
               className={`value ${isPassed ? "success-text" : "failure-text"}`}
             >
-              {Grade}
+              {grade}
             </span>
           </div>
         </div>
