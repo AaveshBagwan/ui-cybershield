@@ -72,14 +72,14 @@ const Quiz = () => {
       if (
         selectedAnswer &&
         !userAnswers.some(
-          (answer) => answer.qid === questionsData[currentQuestion].questionId
+          (answer) => answer.questionId === questionsData[currentQuestion].questionId
         )
       ) {
         setAnsweredQuestions([...answeredQuestions, currentQuestion]);
         setUserAnswers([
           ...userAnswers,
           {
-            qid: questionsData[currentQuestion].questionId,
+            questionId: questionsData[currentQuestion].questionId,
             selectedOptionId: selectedAnswer.optionId,
           },
         ]);
@@ -92,7 +92,7 @@ const Quiz = () => {
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       const prevAnswer = userAnswers.find(
-        (answer) => answer.qid === questionsData[currentQuestion - 1].questionId
+        (answer) => answer.questionId === questionsData[currentQuestion - 1].questionId
       );
       if (prevAnswer) {
         const prevOption = questionsData[currentQuestion - 1].options.find(
@@ -126,13 +126,13 @@ const Quiz = () => {
     if (
       selectedAnswer &&
       !userAnswers.some(
-        (answer) => answer.qid === questionsData[currentQuestion]?.questionId
+        (answer) => answer.questionId === questionsData[currentQuestion]?.questionId
       )
     ) {
       setUserAnswers((prevAnswers) => [
         ...prevAnswers,
         {
-          qid: questionsData[currentQuestion].questionId,
+          questionId: questionsData[currentQuestion].questionId,
           selectedOptionId: selectedAnswer.optionId,
         },
       ]);
@@ -140,13 +140,13 @@ const Quiz = () => {
 
     const completeAnswersList = questionsData.map((question) => {
       const existingAnswer = userAnswers.find(
-        (answer) => answer.qid === question.questionId
+        (answer) => answer.questionId === question.questionId
       );
       return {
-        qid: question.questionId,
+        questionId: question.questionId,
         selectedOptionId: existingAnswer
           ? existingAnswer.selectedOptionId
-          : selectedAnswer?.qid === question.questionId
+          : selectedAnswer?.questionId === question.questionId
             ? selectedAnswer.optionId
             : null,
       };
@@ -184,13 +184,13 @@ const Quiz = () => {
     setSelectedAnswer(option);
 
     const existingAnswerIndex = userAnswers.findIndex(
-      (answer) => answer.qid === questionsData[currentQuestion].questionId
+      (answer) => answer.questionId === questionsData[currentQuestion].questionId
     );
 
     if (existingAnswerIndex !== -1) {
       const updatedAnswers = [...userAnswers];
       updatedAnswers[existingAnswerIndex] = {
-        qid: questionsData[currentQuestion].questionId,
+        questionId: questionsData[currentQuestion].questionId,
         selectedOptionId: option.optionId,
       };
       setUserAnswers(updatedAnswers);
@@ -198,7 +198,7 @@ const Quiz = () => {
       setUserAnswers([
         ...userAnswers,
         {
-          qid: questionsData[currentQuestion].questionId,
+          questionId: questionsData[currentQuestion].questionId,
           selectedOptionId: option.optionId,
         },
       ]);
@@ -207,13 +207,13 @@ const Quiz = () => {
 
   const isQuestionAnswered = (questionIndex) => {
     return userAnswers.some(
-      (answer) => answer.qid === questionsData[questionIndex]?.questionId
+      (answer) => answer.questionId === questionsData[questionIndex]?.questionId
     );
   };
 
   const getCurrentSelectedOption = () => {
     const currentAnswer = userAnswers.find(
-      (answer) => answer.qid === questionsData[currentQuestion]?.questionId
+      (answer) => answer.questionId === questionsData[currentQuestion]?.questionId
     );
     if (currentAnswer) {
       return questionsData[currentQuestion].options.find(
