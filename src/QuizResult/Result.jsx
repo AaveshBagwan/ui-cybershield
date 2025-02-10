@@ -26,7 +26,7 @@ const Results = () => {
 
   const score = location.state.result.score;
   const grade = location.state.result.grade;
-  const isPassed = grade?.toLowerCase() !== "fail"
+  const isPassed = grade?.toLowerCase() !== "failed"
 
   return (
     <div className="results-page">

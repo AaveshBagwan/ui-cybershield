@@ -12,8 +12,8 @@ export const api = axios.create({
 // API endpoints
 export const endpoints = {
   quiz: {
-    getTest: (payload) => api.post("quiz/v1.0/getTest", payload),
-    submitTest: (payload) => api.post("quiz/v1.0/submitTest", payload),
+    getQuiz: (payload) => api.post("quiz/v1.0/getQuiz", payload),
+    submitQuiz: (payload) => api.post("quiz/v1.0/submitQuiz", payload),
   },
 };
 

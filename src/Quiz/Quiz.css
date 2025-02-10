@@ -133,9 +133,10 @@
   color: white;
 }
 
-.skip:hover {
-  background-color: #5a6268;
-}
+/* .skip:hover {
+  background-color: #f0f7ff;
+  border-color: #f0f7ff;
+} */
 
 .submit {
   background-color: #ffc107;
