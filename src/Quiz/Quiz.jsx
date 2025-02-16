@@ -26,12 +26,11 @@ const Quiz = () => {
       try {
         setIsLoading(true);
         const req = {
-          userId: 3,
-          testId: 5,
+          userId: 5,
         };
-        const response = await endpoints.quiz.getTest(req);
+        const response = await endpoints.quiz.getQuiz(req);
         if (isMounted && response.status === 200) {
-          setQuestionsData(response.data.responseData.questionList);
+          setQuestionsData(response.data.responseData.questionsList);
           setTimerStarted(true); // Start timer only after successful API response
         }
       } catch (error) {
@@ -154,12 +153,12 @@ const Quiz = () => {
 
     try {
       const payload = {
-        userId: 2,
-        testId: 3,
-        questionAnswerList: completeAnswersList,
+        userId: 5,
+        testId: 24,
+        questionsList: completeAnswersList,
       };
 
-      const response = await endpoints.quiz.submitTest(payload);
+      const response = await endpoints.quiz.submitQuiz(payload);
       if (response.status === 200) {
         // Set session storage to indicate test submission
         sessionStorage.setItem("testSubmitted", "true");

@@ -33,3 +33,15 @@
   width: 90%;
   animation: fadeIn 0.3s ease-out;
 }
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button:hover {
+  background-color: #f0f7ff;
+  border-color: #f0f7ff;
+}
