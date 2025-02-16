@@ -7,6 +7,7 @@ import Navbar from "./Navbar/Navbar";
 import Login from "./auth/Login/Login";
 import Results from "./QuizResult/Result";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import ViewTest from "./ViewTest/viewTest";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="viewtest" element={<ViewTest />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -1,4 +1,4 @@
-import {useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Result.css";
 
@@ -66,7 +66,7 @@ const Results = () => {
           </button>
           <button
             onClick={() =>
-              navigate("/view-test-result")
+              navigate("/viewtest", { state: { userData: location.state.userData } })
             }
             className="btn result-btn"
           >

@@ -9,6 +9,7 @@ const Quiz = () => {
   const [totalTime, setTotalTime] = useState(600);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [questionsData, setQuestionsData] = useState([]);
+  const [userData, setUserData] = useState([]);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [skippedQuestions, setSkippedQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
@@ -32,6 +33,7 @@ const Quiz = () => {
         if (isMounted && response.status === 200) {
           setQuestionsData(response.data.responseData.questionsList);
           setTimerStarted(true); // Start timer only after successful API response
+          setUserData(response.data.responseData);
         }
       } catch (error) {
         if (isMounted) {
@@ -146,15 +148,15 @@ const Quiz = () => {
         selectedOptionId: existingAnswer
           ? existingAnswer.selectedOptionId
           : selectedAnswer?.questionId === question.questionId
-          ? selectedAnswer.optionId
-          : null,
+            ? selectedAnswer.optionId
+            : null,
       };
     });
 
     try {
       const payload = {
-        userId: 5,
-        testId: 24,
+        userId: userData?.userId,
+        testId: userData?.testId,
         questionsList: completeAnswersList,
       };
 
@@ -162,7 +164,7 @@ const Quiz = () => {
       if (response.status === 200) {
         // Set session storage to indicate test submission
         sessionStorage.setItem("testSubmitted", "true");
-        navigate("/results", { state: { result: response.data.responseData } });
+        navigate("/results", { state: { result: response.data.responseData, userData: userData } });
         setShowDialog(false);
       } else {
         throw new Error("Submission failed. Please try again.");
@@ -230,15 +232,14 @@ const Quiz = () => {
         {questionsData.map((_, index) => (
           <div
             key={index}
-            className={`step ${
-              currentQuestion === index
-                ? "current"
-                : isQuestionAnswered(index)
+            className={`step ${currentQuestion === index
+              ? "current"
+              : isQuestionAnswered(index)
                 ? "attempted"
                 : skippedQuestions.includes(index)
-                ? "skipped"
-                : ""
-            }`}
+                  ? "skipped"
+                  : ""
+              }`}
             onClick={() => setCurrentQuestion(index)}
           />
         ))}
@@ -254,11 +255,10 @@ const Quiz = () => {
             <button
               key={option.optionId}
               onClick={() => handleOptionClick(option)}
-              className={`option ${
-                getCurrentSelectedOption()?.optionId === option.optionId
-                  ? "selected"
-                  : ""
-              }`}
+              className={`option ${getCurrentSelectedOption()?.optionId === option.optionId
+                ? "selected"
+                : ""
+                }`}
               disabled={totalTime === 0}
             >
               {option.option}
@@ -320,7 +320,7 @@ const Quiz = () => {
               : "Are you sure you want to submit?"
           }
           onConfirm={confirmSubmit}
-          onCancel={totalTime === 0 ? null : cancelSubmit} 
+          onCancel={totalTime === 0 ? null : cancelSubmit}
         />
       )}
     </div>
