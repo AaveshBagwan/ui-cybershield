@@ -14,6 +14,7 @@ export const endpoints = {
   quiz: {
     getQuiz: (payload) => api.post("quiz/v1.0/getQuiz", payload),
     submitQuiz: (payload) => api.post("quiz/v1.0/submitQuiz", payload),
+    viewQuiz:(payload) => api.post("/quiz/v1.0/viewQuiz",payload),
   },
 };
 

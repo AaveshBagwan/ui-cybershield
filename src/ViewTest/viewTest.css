@@ -1,0 +1,23 @@
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .option {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .option:hover {
+    border-color: #ffc107;
+    background-color: #f0f7ff;
+  }
