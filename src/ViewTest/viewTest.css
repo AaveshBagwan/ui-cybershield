@@ -1,23 +1,69 @@
+/* Container for the entire test */
 .options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .option {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    text-align: left;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  .option:hover {
-    border-color: #ffc107;
-    background-color: #f0f7ff;
-  }
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for each question */
+.question-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  transition: 0.3s;
+}
+
+.question-container:hover {
+  background: #f1f1f1;
+}
+
+/* Question text */
+.question-container h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Options list */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Individual option styling */
+.option-item {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s, transform 0.2s;
+  border: 1px solid transparent;
+}
+
+/* Correct answer (Green) */
+.correct {
+  background-color: #d4edda; /* Light green */
+  color: #155724; /* Dark green text */
+  border-color: #c3e6cb;
+  font-weight: bold;
+}
+
+/* Incorrect answer (Red) */
+.incorrect {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red text */
+  border-color: #f5c6cb;
+  font-weight: bold;
+}
+
+/* Hover effect */
+.option-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+}
