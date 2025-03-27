@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance with default config
 export const api = axios.create({
-  baseURL: "http://localhost:8080/cybershield/",
+  baseURL: "http://localhost:8080/cybershield",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -16,6 +16,9 @@ export const endpoints = {
     submitQuiz: (payload) => api.post("quiz/v1.0/submitQuiz", payload),
     viewQuiz:(payload) => api.post("/quiz/v1.0/viewQuiz",payload),
   },
+  auth: {
+    login: (payload) => api.post("/public/token",payload)
+  }
 };
 
 // Request interceptor for API calls
