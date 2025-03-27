@@ -1,0 +1,149 @@
+.results-page {
+  height: calc(92vh - 64px); /* Adjust 64px to match your navbar height */
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.results-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.check-icon {
+  margin-bottom: 1rem;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.icon.pass {
+  background-color: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+}
+
+.icon.fail {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
+.title {
+  font-size: 24px;
+  margin: 0 0 1rem 0;
+}
+
+.success-text {
+  color: #2e7d32;
+}
+
+.failure-text {
+  color: #d32f2f;
+}
+
+.message {
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.results-details {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.result-row:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  color: #666;
+  font-weight: 500;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.button-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.home-btn {
+  background-color: #1976d2;
+  color: white;
+}
+
+.home-btn:hover {
+  background-color: #1565c0;
+}
+
+.result-btn {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.result-btn:hover {
+  background-color: #1b5e20;
+}
+
+.loading-container {
+  height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .results-card {
+    padding: 1.5rem;
+  }
+
+  .button-container {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

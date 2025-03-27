@@ -7,6 +7,9 @@ import Navbar from "./Navbar/Navbar";
 import Login from "./auth/Login/Login";
 import Register from "./auth/Register/Register";
 import "./App.css";
+import Results from "./QuizResult/Result";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import ViewTest from "./ViewTest/viewTest";
 
 function App() {
   return (
@@ -21,6 +24,15 @@ function App() {
             <Route path="forum" element={<Forum />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
+            <Route
+              path="/results"
+              element={
+                <ProtectedRoute>
+                  <Results />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="viewtest" element={<ViewTest />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -12,10 +12,11 @@ export const api = axios.create({
 // API endpoints
 export const endpoints = {
   quiz: {
-    getTest: (payload) => api.post("quiz/v1.0/getTest", payload),
+    getQuiz: (payload) => api.post("quiz/v1.0/getQuiz", payload),
+    submitQuiz: (payload) => api.post("quiz/v1.0/submitQuiz", payload),
+    viewQuiz:(payload) => api.post("/quiz/v1.0/viewQuiz",payload),
   },
 };
-
 
 // Request interceptor for API calls
 //The interceptor is particularly useful when you need to add something to every request automatically, rather than adding it manually each time you make an API call.
@@ -41,45 +42,58 @@ api.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // Unauthorized - usually means user needs to login
-          console.error('Unauthorized access - redirecting to login');
-          window.location.href = '/login';
-          return Promise.reject('Please login to continue.');
+          console.error("Unauthorized access - redirecting to login");
+          window.location.href = "/login";
+          return Promise.reject("Please login to continue.");
 
         case 403:
           // Forbidden - user doesn't have necessary permissions
-          console.error('Access forbidden');
-          return Promise.reject('You do not have permission to access this resource.');
+          console.error("Access forbidden");
+          return Promise.reject(
+            "You do not have permission to access this resource."
+          );
 
         case 404:
           // Not Found - requested resource doesn't exist
-          console.error('Resource not found');
-          return Promise.reject('The requested resource was not found.');
+          console.error("Resource not found");
+          return Promise.reject("The requested resource was not found.");
 
         case 500:
           // Server Error
-          console.error('Server error occurred:', error.response.data);
-          return Promise.reject('An internal server error occurred. Please try again later.');
+          console.error("Server error occurred:", error.response.data);
+          return Promise.reject(
+            "An internal server error occurred. Please try again later."
+          );
 
         default:
           // Other error status codes
-          console.error('Request failed:', error.response.status, error.response.data);
-          return Promise.reject('An unexpected error occurred. Please try again.');
+          console.error(
+            "Request failed:",
+            error.response.status,
+            error.response.data
+          );
+          return Promise.reject(
+            "An unexpected error occurred. Please try again."
+          );
       }
     } else if (error.request) {
       // Network error - no response received
-      console.error('Network error - no response received:', error.request);
-      return Promise.reject('Unable to connect to the server. Please check your internet connection.');
+      console.error("Network error - no response received:", error.request);
+      return Promise.reject(
+        "Unable to connect to the server. Please check your internet connection."
+      );
     } else {
       // Request setup error
-      console.error('Error setting up request:', error.message);
-      return Promise.reject('Failed to send request. Please try again.');
+      console.error("Error setting up request:", error.message);
+      return Promise.reject("Failed to send request. Please try again.");
     }
   }
 );
 
 // Error messages
 export const errorMessages = {
-  NETWORK_ERROR: "Unable to connect to the server. Please check your internet connection.",
+  NETWORK_ERROR:
+    "Unable to connect to the server. Please check your internet connection.",
   SERVER_ERROR: "An error occurred on the server. Please try again later.",
   TIMEOUT_ERROR: "The request timed out. Please try again.",
   UNAUTHORIZED: "You are not authorized to perform this action.",
@@ -99,7 +113,9 @@ export const handleApiError = (error) => {
       case 500:
         return errorMessages.SERVER_ERROR;
       default:
-        return `An error occurred: ${error.response.data.message || "Unknown error"}`;
+        return `An error occurred: ${
+          error.response.data.message || "Unknown error"
+        }`;
     }
   } else if (error.request) {
     // The request was made but no response was received
