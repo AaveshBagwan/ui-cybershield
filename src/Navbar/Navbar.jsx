@@ -44,13 +44,15 @@
 // export default Navbar;
 
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { FaBars, FaTimes } from "react-icons/fa"; // Icons for the menu
+import { CommonContants } from "../utils/Constants";
+import Cookies from "js-cookie"; // For handling cookies
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const navigate =  useNavigate();
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -88,11 +90,29 @@ function Navbar() {
               Forum
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/auth/login" className="login-btn" onClick={() => setMenuOpen(false)}>
-              Login
-            </NavLink>
-          </li>
+          {
+            !Cookies.get(CommonContants.acTokenKey) && (
+              <li>
+                <NavLink to="/auth/login" className="login-btn" onClick={() => setMenuOpen(false)}>
+                  Login
+                </NavLink>
+              </li>
+            )
+          }
+          {
+            Cookies.get(CommonContants.acTokenKey) && (
+              <li>
+                <NavLink to="/auth/login" className="login-btn" onClick={() => {
+                  setMenuOpen(false)
+                  Cookies.remove(CommonContants.acTokenKey);
+                  Cookies.remove(CommonContants.rfTokenKey); 
+                  navigate("/auth/login");
+                }}>
+                  Logout
+                </NavLink>
+              </li>
+            )
+          }
         </ul>
       </div>
     </nav>
